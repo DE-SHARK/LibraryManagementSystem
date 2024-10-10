@@ -1,4 +1,4 @@
-package me.deshark.hms.server.user;
+package me.deshark.lms.server.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

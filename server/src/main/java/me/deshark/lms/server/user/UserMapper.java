@@ -1,4 +1,4 @@
-package me.deshark.hms.server.user;
+package me.deshark.lms.server.user;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

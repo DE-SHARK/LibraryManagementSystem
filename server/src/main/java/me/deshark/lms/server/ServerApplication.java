@@ -1,4 +1,4 @@
-package me.deshark.hms.server;
+package me.deshark.lms.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
