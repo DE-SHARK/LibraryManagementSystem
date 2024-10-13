@@ -2,7 +2,6 @@ package me.deshark.lms.server.user;
 
 import me.deshark.lms.server.enums.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,9 +23,7 @@ public class UserController {
     // 注册
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
-
         boolean result = userService.registerUser(user);
-
         if (result) {
             return ResponseEntity
                     .status(ResponseStatus.SUCCESS.getCode())

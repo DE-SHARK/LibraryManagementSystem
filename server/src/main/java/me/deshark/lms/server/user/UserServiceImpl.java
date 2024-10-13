@@ -25,8 +25,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean registerUser(User user) {
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPassword);
-        return userMapper.insertUser(user) > 0;
+        if(getUserByUsername(user.getUsername()) != null) {
+            throw new UserExitedException("用户已存在");
+        } else {
+            String hashedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(hashedPassword);
+            return userMapper.insertUser(user) > 0;
+        }
     }
 }
