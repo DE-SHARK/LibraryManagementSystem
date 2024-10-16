@@ -1,4 +1,4 @@
-package me.deshark.lms.server.user.exceptions;
+package me.deshark.lms.server.exception;
 
 public class UserExitedException extends RuntimeException {
     public UserExitedException(String message) {

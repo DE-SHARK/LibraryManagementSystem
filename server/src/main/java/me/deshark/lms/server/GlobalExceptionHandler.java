@@ -2,7 +2,7 @@ package me.deshark.lms.server;
 
 import me.deshark.lms.server.enums.ExceptionEnum;
 import me.deshark.lms.server.user.ResultResponse;
-import me.deshark.lms.server.user.exceptions.UserExitedException;
+import me.deshark.lms.server.exception.UserExitedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

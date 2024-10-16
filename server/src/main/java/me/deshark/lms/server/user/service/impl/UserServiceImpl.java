@@ -1,12 +1,15 @@
-package me.deshark.lms.server.user;
+package me.deshark.lms.server.user.service.impl;
 
-import me.deshark.lms.server.user.exceptions.UserExitedException;
+import me.deshark.lms.server.user.User;
+import me.deshark.lms.server.user.UserMapper;
+import me.deshark.lms.server.exception.UserExitedException;
+import me.deshark.lms.server.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     @Autowired
     private UserMapper userMapper;

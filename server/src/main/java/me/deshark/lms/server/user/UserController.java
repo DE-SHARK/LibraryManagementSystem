@@ -1,6 +1,7 @@
 package me.deshark.lms.server.user;
 
 import me.deshark.lms.server.enums.ResponseStatus;
+import me.deshark.lms.server.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @RequestMapping("/getUserById")
     public User getUserById(Long id) {

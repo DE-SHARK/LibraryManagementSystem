@@ -1,6 +1,8 @@
-package me.deshark.lms.server.user;
+package me.deshark.lms.server.user.service;
 
-public interface UserService {
+import me.deshark.lms.server.user.User;
+
+public interface IUserService {
 
     User getUserById(Long id);
 
