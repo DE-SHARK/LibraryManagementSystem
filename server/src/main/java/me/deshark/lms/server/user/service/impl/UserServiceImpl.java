@@ -19,8 +19,8 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private UserMapper userMapper;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -42,24 +42,18 @@ public class UserServiceImpl implements IUserService {
             throw new UserExitedException("Username already exists");
         }
 
-//        String hashedPassword = passwordEncoder.encode(user.getPassword());
-//        user.setPassword(hashedPassword);
-        user.setPassword("{noop}"+user.getPassword());
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
         return userMapper.insertUser(user) > 0;
 
     }
 
     @Override
     public ResultResponse<String> loginUser(User user) {
-//        Authentication authenticationRequest =
-//                UsernamePasswordAuthenticationToken.unauthenticated(user.getUsername(), user.getPassword());
-//        Authentication authenticationResponse =
-//                authenticationManager.authenticate(authenticationRequest);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        if (ObjectUtils.isEmpty(authentication)) {
-            throw new UserExitedException("Invalid username or password");
-        }
-        return ResultResponse.success(authentication.getPrincipal().toString());
+        Authentication authenticationRequest =
+                UsernamePasswordAuthenticationToken.unauthenticated(user.getUsername(), user.getPassword());
+        Authentication authenticationResponse =
+                authenticationManager.authenticate(authenticationRequest);
+        return ResultResponse.success(authenticationResponse.getPrincipal().toString());
     }
 }
