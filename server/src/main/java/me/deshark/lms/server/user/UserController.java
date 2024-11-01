@@ -5,10 +5,7 @@ import me.deshark.lms.server.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -36,4 +33,11 @@ public class UserController {
                     .body(ResponseStatus.BAD_REQUEST.getMessage());
         }
     }
+
+    // 登录
+    @GetMapping("/login")
+    public ResultResponse<String> login(@RequestBody @Validated User user) {
+        return userService.loginUser(user);
+    }
+
 }
