@@ -39,6 +39,7 @@ CREATE TABLE book_borrow (
 );
 
 -- 图书信息视图
+DROP VIEW IF EXISTS book_info;
 CREATE VIEW book_info AS
 SELECT 
     b.isbn,
@@ -50,4 +51,4 @@ SELECT
     SUM(CASE WHEN bc.status = 'AVAILABLE' THEN 1 ELSE 0 END) as available_quantity
 FROM book b
 LEFT JOIN book_copy bc ON b.isbn = bc.isbn
-GROUP BY b.isbn, b.title, b.author, b.clc_number, b.location;
+GROUP BY b.isbn;
