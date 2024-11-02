@@ -1,5 +1,6 @@
 package me.deshark.lms.server.service.intf;
 
+import me.deshark.lms.server.model.dto.AuthRequest;
 import me.deshark.lms.server.utils.ResultResponse;
 import me.deshark.lms.server.model.entity.User;
 
@@ -9,7 +10,7 @@ public interface IUserService {
 
     User getUserByUsername(String username);
 
-    boolean registerUser(User user);
+    ResultResponse<String> registerUser(AuthRequest authRequest);
 
-    ResultResponse<String> loginUser(User user);
+    ResultResponse<String> loginUser(AuthRequest authRequest);
 }

@@ -1,5 +1,6 @@
 package me.deshark.lms.server.service.impl;
 
+import me.deshark.lms.server.model.dto.AuthRequest;
 import me.deshark.lms.server.utils.ResultResponse;
 import me.deshark.lms.server.model.entity.User;
 import me.deshark.lms.server.mapper.UserMapper;
@@ -13,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class AuthServiceImpl implements IUserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -35,22 +36,26 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public boolean registerUser(User user) {
+    public ResultResponse<String> registerUser(AuthRequest authRequest) {
 
-        if (getUserByUsername(user.getUsername()) != null) {
+        if (getUserByUsername(authRequest.getUsername()) != null) {
             throw new UserExitedException("Username already exists");
         }
 
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        String hashedPassword = passwordEncoder.encode(authRequest.getPassword());
+        User user = new User();
+        user.setUsername(authRequest.getUsername());
         user.setPassword(hashedPassword);
-        return userMapper.insertUser(user) > 0;
+        user.setRole("BORROWER");
+        userMapper.insertUser(user);
+        return ResultResponse.success();
 
     }
 
     @Override
-    public ResultResponse<String> loginUser(User user) {
+    public ResultResponse<String> loginUser(AuthRequest authRequest) {
         Authentication authenticationRequest =
-                UsernamePasswordAuthenticationToken.unauthenticated(user.getUsername(), user.getPassword());
+                UsernamePasswordAuthenticationToken.unauthenticated(authRequest.getUsername(), authRequest.getPassword());
         Authentication authenticationResponse =
                 authenticationManager.authenticate(authenticationRequest);
         return ResultResponse.success(authenticationResponse.getPrincipal().toString());

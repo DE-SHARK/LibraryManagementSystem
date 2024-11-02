@@ -32,6 +32,9 @@ public class SpringSecurity {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/", "/user/register", "/user/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/register", "/user/login").permitAll()
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/librarian/**").hasAuthority("LIBRARIAN")
+                        .requestMatchers("/borrower/**").hasAuthority("BORROWER")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

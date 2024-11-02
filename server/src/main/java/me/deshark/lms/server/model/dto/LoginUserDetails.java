@@ -3,6 +3,7 @@ package me.deshark.lms.server.model.dto;
 import lombok.Data;
 import me.deshark.lms.server.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -19,7 +20,7 @@ public class LoginUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority(user.getRole()));
     }
 
     @Override
