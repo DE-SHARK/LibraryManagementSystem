@@ -11,8 +11,7 @@ CREATE TABLE book (
     author VARCHAR(255) NOT NULL,
     published_date DATE,
     clc_number VARCHAR(20) NOT NULL,
-    location VARCHAR(255),
-    FOREIGN KEY (clc_number) REFERENCES clc_category(clc_number)
+    location VARCHAR(255)
 );
 
 CREATE TABLE book_copy (
@@ -23,13 +22,15 @@ CREATE TABLE book_copy (
     FOREIGN KEY (isbn) REFERENCES book(isbn)
 );
 
+-- 借阅记录表
 CREATE TABLE book_borrow (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     book_copy_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
+    status ENUM('BORROWED', 'RETURNED', 'OVERDUE', 'RESERVED') NOT NULL DEFAULT 'BORROWED',
     borrow_date DATETIME NOT NULL,
     return_date DATETIME,
-    status ENUM('BORROWED', 'RETURNED', 'OVERDUE') NOT NULL DEFAULT 'BORROWED',
+    expected_borrow_date DATE,
     FOREIGN KEY (book_copy_id) REFERENCES book_copy(id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -39,10 +40,10 @@ SELECT
     b.isbn,
     b.title,
     b.author,
-    b.type,
+    b.clc_number,
     b.location,
     COUNT(bc.id) as total_quantity,
     SUM(CASE WHEN bc.status = 'AVAILABLE' THEN 1 ELSE 0 END) as available_quantity
 FROM book b
 LEFT JOIN book_copy bc ON b.isbn = bc.isbn
-GROUP BY b.isbn, b.title, b.author, b.type, b.location;
+GROUP BY b.isbn, b.title, b.author, b.clc_number, b.location;
