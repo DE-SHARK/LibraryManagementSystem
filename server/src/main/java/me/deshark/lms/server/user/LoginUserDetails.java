@@ -1,8 +1,6 @@
 package me.deshark.lms.server.user;
 
 import lombok.Data;
-import lombok.Setter;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,10 +8,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@Setter
 public class LoginUserDetails implements UserDetails {
 
     private User user;
+
+    public LoginUserDetails(User user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
