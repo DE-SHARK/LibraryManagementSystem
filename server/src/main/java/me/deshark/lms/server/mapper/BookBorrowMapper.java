@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.Date;
+
 @Mapper
 public interface BookBorrowMapper {
 
@@ -32,4 +34,12 @@ public interface BookBorrowMapper {
     // 更新借阅状态
     @Update("UPDATE book_borrow SET status = #{status} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}")
     void updateBookBorrowStatus(Long userId, Long bookCopyId, String status);
+
+    // 获取借阅日期
+    @Select("SELECT borrow_date FROM book_borrow WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}")
+    Date getBookBorrowBorrowDate(Long userId, Long bookCopyId);
+
+    // 更新借阅日期
+    @Update("UPDATE book_borrow SET borrow_date = #{newBorrowDate} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}") 
+    void updateBookBorrowBorrowDate(Long userId, Long bookCopyId, Date newBorrowDate);
 }

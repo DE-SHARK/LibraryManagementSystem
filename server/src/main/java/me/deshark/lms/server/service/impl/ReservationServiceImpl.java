@@ -139,6 +139,38 @@ public class ReservationServiceImpl implements IReservationService {
         return ResultResponse.success("图书归还成功");
     }
 
+    // 续借图书
+    @Override
+    public ResultResponse<String> renewBook(String isbn, Long userId) {
+
+        // 获取图书副本ID
+        Long bookCopyId = bookBorrowMapper.getBookCopyIdByUserIdAndIsbn(userId, isbn);
+    
+        if (bookCopyId == null) {
+            return ResultResponse.error(400, "用户未借阅此图书");
+        }
+    
+        // 检查用户是否符合续借条件
+        if (isUserEligibleForBorrowing(userId)) {
+            return ResultResponse.error(400, "用户不符合续借条件");
+        }
+    
+        // 更新借阅记录状态为续借
+        bookBorrowMapper.updateBookBorrowStatus(userId, bookCopyId, "BORROWED");
+    
+        // 获取当前借阅记录的借阅日期
+        Date borrowDate = bookBorrowMapper.getBookBorrowBorrowDate(userId, bookCopyId);
+        // 计算新的借阅日期
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(borrowDate);
+        calendar.add(Calendar.DAY_OF_MONTH, 14);
+        Date newBorrowDate = calendar.getTime();
+        // 更新借阅记录的借阅日期
+        bookBorrowMapper.updateBookBorrowBorrowDate(userId, bookCopyId, newBorrowDate);
+
+        return ResultResponse.success("续借成功");
+    }
+
     // 检查用户是否符合借阅条件
     @Override
     public boolean isUserEligibleForBorrowing(Long userId) {
