@@ -1,6 +1,7 @@
 package me.deshark.lms.server.controller;
 
 import me.deshark.lms.server.model.dto.LoginUserDetails;
+import me.deshark.lms.server.model.dto.ReservationRequest;
 import me.deshark.lms.server.service.intf.IReservationService;
 import me.deshark.lms.server.utils.ResultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +32,17 @@ public class ReservationController {
     }
 
     @PostMapping("/borrow")
-    public ResultResponse<String> borrowBook(@RequestParam String isbn) {
+    public ResultResponse<String> borrowBook(@RequestBody ReservationRequest reservationRequest) {
+        System.out.println(reservationRequest.getIsbn());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getId();
 
-        return reservationService.borrowBook(isbn, userId);
+        return reservationService.borrowBook(reservationRequest.getIsbn(), userId);
     }
 
     @PostMapping("/return")
-    public ResultResponse<String> returnBook(@RequestParam String isbn) {
+    public ResultResponse<String> returnBook(@RequestBody String isbn) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getId();
@@ -49,7 +51,7 @@ public class ReservationController {
     }
 
     @PostMapping("/renew")
-    public ResultResponse<String> renewBook(@RequestParam String isbn) {
+    public ResultResponse<String> renewBook(@RequestBody String isbn) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getId();
