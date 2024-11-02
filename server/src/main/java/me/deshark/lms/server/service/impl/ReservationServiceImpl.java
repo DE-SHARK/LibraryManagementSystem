@@ -120,4 +120,24 @@ public class ReservationServiceImpl implements IReservationService {
 
         return ResultResponse.success("借书成功，最晚归还日期为：" + dueDate);
     }
+
+    @Override
+    public ResultResponse<String> returnBook(String isbn, Long userId) {
+        // 检查用户是否借阅了这本书
+        int borrowedCount = bookBorrowMapper.getBorrowedBookCountByIsbn(userId, isbn);
+        if (borrowedCount == 0) {
+            return ResultResponse.error(400, "用户未借阅此图书");
+        }
+
+        // 检查图书是否过期
+        boolean isOverdue = bookBorrowMapper.isBookOverdue(userId, isbn);
+        if (isOverdue) {
+            return ResultResponse.error(400, "图书已过期，请先续借");
+        }
+
+        // 更新借阅记录为已归还
+        bookBorrowMapper.updateBookBorrowStatus(userId, isbn, "RETURNED");
+
+        return ResultResponse.success("图书归还成功");
+    }
 } 

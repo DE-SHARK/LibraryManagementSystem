@@ -13,4 +13,6 @@ public interface IReservationService {
     boolean isBookAvailableForReservation(String isbn);
     // 借阅图书
     ResultResponse<String> borrowBook(String isbn, Long userId);
+    // 归还图书
+    ResultResponse<String> returnBook(String isbn, Long userId);
 } 
