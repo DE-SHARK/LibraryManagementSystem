@@ -1,17 +1,16 @@
-package me.deshark.lms.server.user.service.impl;
+package me.deshark.lms.server.service.impl;
 
-import me.deshark.lms.server.user.ResultResponse;
-import me.deshark.lms.server.user.User;
-import me.deshark.lms.server.user.UserMapper;
+import me.deshark.lms.server.utils.ResultResponse;
+import me.deshark.lms.server.model.entity.User;
+import me.deshark.lms.server.mapper.UserMapper;
 import me.deshark.lms.server.exception.UserExitedException;
-import me.deshark.lms.server.user.service.IUserService;
+import me.deshark.lms.server.service.intf.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 @Service
 public class UserServiceImpl implements IUserService {

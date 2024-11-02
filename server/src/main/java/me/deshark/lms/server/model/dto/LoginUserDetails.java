@@ -1,6 +1,7 @@
-package me.deshark.lms.server.user;
+package me.deshark.lms.server.model.dto;
 
 import lombok.Data;
+import me.deshark.lms.server.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

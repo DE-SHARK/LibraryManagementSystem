@@ -1,7 +1,9 @@
-package me.deshark.lms.server.user;
+package me.deshark.lms.server.controller;
 
-import me.deshark.lms.server.enums.ResponseStatus;
-import me.deshark.lms.server.user.service.IUserService;
+import me.deshark.lms.server.constant.enums.ResponseStatus;
+import me.deshark.lms.server.service.intf.IUserService;
+import me.deshark.lms.server.utils.ResultResponse;
+import me.deshark.lms.server.model.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

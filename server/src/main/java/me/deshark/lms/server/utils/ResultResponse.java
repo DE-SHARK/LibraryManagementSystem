@@ -1,9 +1,9 @@
-package me.deshark.lms.server.user;
+package me.deshark.lms.server.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.deshark.lms.server.enums.ResponseStatus;
+import me.deshark.lms.server.constant.enums.ResponseStatus;
 
 @NoArgsConstructor
 @AllArgsConstructor

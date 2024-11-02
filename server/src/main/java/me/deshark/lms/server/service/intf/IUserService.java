@@ -1,7 +1,7 @@
-package me.deshark.lms.server.user.service;
+package me.deshark.lms.server.service.intf;
 
-import me.deshark.lms.server.user.ResultResponse;
-import me.deshark.lms.server.user.User;
+import me.deshark.lms.server.utils.ResultResponse;
+import me.deshark.lms.server.model.entity.User;
 
 public interface IUserService {
 

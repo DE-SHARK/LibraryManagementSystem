@@ -1,4 +1,4 @@
-package me.deshark.lms.server.user;
+package me.deshark.lms.server.model.entity;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

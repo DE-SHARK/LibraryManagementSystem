@@ -1,10 +1,10 @@
-package me.deshark.lms.server.user.service.impl;
+package me.deshark.lms.server.service.impl;
 
 
 import jakarta.annotation.Resource;
-import me.deshark.lms.server.user.LoginUserDetails;
-import me.deshark.lms.server.user.User;
-import me.deshark.lms.server.user.UserMapper;
+import me.deshark.lms.server.model.dto.LoginUserDetails;
+import me.deshark.lms.server.model.entity.User;
+import me.deshark.lms.server.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;

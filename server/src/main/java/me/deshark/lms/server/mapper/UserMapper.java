@@ -1,5 +1,6 @@
-package me.deshark.lms.server.user;
+package me.deshark.lms.server.mapper;
 
+import me.deshark.lms.server.model.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

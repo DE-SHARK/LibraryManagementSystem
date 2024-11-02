@@ -1,4 +1,4 @@
-package me.deshark.lms.server.enums;
+package me.deshark.lms.server.constant.enums;
 
 import lombok.Getter;
 
