@@ -25,8 +25,8 @@ public class BookServiceImpl implements IBookService {
     }
 
     @Override
-    public List<BookInfo> findBooksByType(String type) {
-        return bookMapper.findBooksByType(type);
+    public List<BookInfo> findBooksByClcNumber(String clcNumber) {
+        return bookMapper.findBooksByClcNumber(clcNumber);
     }
 
     @Override

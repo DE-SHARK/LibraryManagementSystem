@@ -25,9 +25,9 @@ public class BookController {
         return ResultResponse.success(bookService.findBooksByAuthor(author));
     }
 
-    @GetMapping("/searchByType")
-    public ResultResponse<List<BookInfo>> searchBooksByType(@RequestParam String type) {
-        return ResultResponse.success(bookService.findBooksByType(type));
+    @GetMapping("/searchByClcNumber")
+    public ResultResponse<List<BookInfo>> searchBooksByClcNumber(@RequestParam String clcNumber) {
+        return ResultResponse.success(bookService.findBooksByClcNumber(clcNumber));
     }
 
     @GetMapping("/info/{isbn}")

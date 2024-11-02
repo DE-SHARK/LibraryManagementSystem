@@ -10,8 +10,9 @@ CREATE TABLE book (
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
     published_date DATE,
-    type ENUM('FICTION', 'NONFICTION', 'SCIENCE', 'ART', 'OTHER'),
-    location VARCHAR(255)
+    clc_number VARCHAR(20) NOT NULL,
+    location VARCHAR(255),
+    FOREIGN KEY (clc_number) REFERENCES clc_category(clc_number)
 );
 
 CREATE TABLE book_copy (

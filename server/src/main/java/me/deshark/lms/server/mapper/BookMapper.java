@@ -14,8 +14,8 @@ public interface BookMapper {
     @Select("SELECT * FROM book_info WHERE author LIKE CONCAT('%', #{author}, '%')")
     List<BookInfo> findBooksByAuthor(String author);
 
-    @Select("SELECT * FROM book_info WHERE type = #{type}")
-    List<BookInfo> findBooksByType(String type);
+    @Select("SELECT * FROM book_info WHERE clc_number LIKE CONCAT(#{clcNumber}, '%')")
+    List<BookInfo> findBooksByClcNumber(String clcNumber);
 
     @Select("SELECT * FROM book_info WHERE isbn = #{isbn}")
     BookInfo getBookInfoByIsbn(String isbn);
