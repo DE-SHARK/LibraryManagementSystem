@@ -29,4 +29,13 @@ public class ReservationController {
         // 
         return reservationService.reserveBook(isbn, userId, expectedBorrowDate);
     }
+
+    @PostMapping("/borrow")
+    public ResultResponse<String> borrowBook(@RequestParam String isbn) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getUser().getId();
+
+        return reservationService.borrowBook(isbn, userId);
+    }
 } 
