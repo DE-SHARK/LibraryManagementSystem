@@ -9,46 +9,27 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface BookBorrowMapper {
 
-    // 插入借阅记录
-    @Insert("INSERT INTO book_borrow(book_copy_id, user_id, borrow_date, expected_borrow_date, status) " +
-            "VALUES(#{bookCopyId}, #{userId}, #{borrowDate}, #{expectedBorrowDate}, #{status})")
-    void insertBookBorrow(BookBorrow bookBorrow);
-
-    // 获取逾期未还的图书数量
-    @Select("SELECT COUNT(*) FROM book_borrow WHERE user_id = #{userId} AND status = 'OVERDUE'")
+    // 获取用户逾期未还的图书数量
+    @Select("SELECT COUNT(*) FROM book_borrow WHERE user_id = #{userId} AND status = 'BORROWED'")
     int getOverdueBookCount(Long userId);
 
-    // 获取可用的图书副本ID
-    @Select("SELECT id FROM book_copy WHERE isbn = #{isbn} AND status = 'AVAILABLE' LIMIT 1")
-    Long getAvailableBookCopyId(String isbn);
+    // 获取用户预借此书的数量
+    @Select("SELECT COUNT(*) FROM book_borrow WHERE user_id = #{userId} AND status = 'RESERVED'")
+    int getReservedBookCountByIsbn(Long userId, String isbn);
 
-    // 获取用户预借的图书数量
-    @Select("SELECT COUNT(*) FROM book_borrow bb " +
-            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
-            "WHERE bb.user_id = #{userId} AND bc.isbn = #{isbn} AND bb.status = 'RESERVED'")
-    int getReservedBookCount(Long userId, String isbn);
-
-    // 获取用户已借的图书数量
+    // 获取用户已借此书的数量
     @Select("SELECT COUNT(*) FROM book_borrow WHERE user_id = #{userId} AND status = 'BORROWED'")
-    int getBorrowedBookCount(Long userId);
-
-    // 获取用户已借的图书数量
-    @Select("SELECT COUNT(*) FROM book_borrow bb " +
-            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
-            "WHERE bb.user_id = #{userId} AND bc.isbn = #{isbn} AND bb.status = 'BORROWED'")
     int getBorrowedBookCountByIsbn(Long userId, String isbn);
 
-    // 检查图书是否过期
-    @Select("SELECT COUNT(*) > 0 FROM book_borrow bb " +
-            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
-            "WHERE bb.user_id = #{userId} AND bc.isbn = #{isbn} AND bb.status = 'BORROWED' " +
-            "AND bb.expected_borrow_date < NOW()")
-    boolean isBookOverdue(Long userId, String isbn);
+    // 插入记录
+    @Insert("INSERT INTO book_borrow (book_copy_id, user_id, status, borrow_date, expected_borrow_date) VALUES (#{bookCopyId}, #{userId}, #{status}, #{borrowDate}, #{expectedBorrowDate})")
+    void insertBookBorrow(BookBorrow bookBorrow);
 
-    // 更新借阅记录为已归还
-    @Update("UPDATE book_borrow bb " +
-            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
-            "SET bb.status = #{status} " +
-            "WHERE bb.user_id = #{userId} AND bc.isbn = #{isbn} AND bb.status = 'BORROWED'")
-    void updateBookBorrowStatus(Long userId, String isbn, String status);
-} 
+    // 获取图书副本ID
+    @Select("SELECT book_copy_id FROM book_borrow WHERE user_id = #{userId} AND book_copy_id IN (SELECT id FROM book_copy WHERE isbn = #{isbn})")
+    Long getBookCopyIdByUserIdAndIsbn(Long userId, String isbn);
+
+    // 更新借阅状态
+    @Update("UPDATE book_borrow SET status = #{status} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}")
+    void updateBookBorrowStatus(Long userId, Long bookCopyId, String status);
+}

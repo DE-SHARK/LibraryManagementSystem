@@ -8,6 +8,7 @@ public class BookBorrow {
     private Long id;
     private Long bookCopyId;
     private Long userId;
+    private Date createDate;
     private String status;  // BORROWED, RETURNED, OVERDUE, RESERVED
     private Date borrowDate;
     private Date returnDate;

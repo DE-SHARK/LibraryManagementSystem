@@ -5,6 +5,7 @@ CREATE TABLE user (
     role ENUM('BORROWER', 'LIBRARIAN', 'ADMIN') NOT NULL
 );
 
+-- 图书表
 CREATE TABLE book (
     isbn VARCHAR(13) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -14,10 +15,11 @@ CREATE TABLE book (
     location VARCHAR(255)
 );
 
+-- 图书副本表
 CREATE TABLE book_copy (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     isbn VARCHAR(13) NOT NULL,
-    status ENUM('AVAILABLE', 'BORROWED', 'LOST', 'DAMAGED') NOT NULL DEFAULT 'AVAILABLE',
+    status ENUM('AVAILABLE', 'RESERVED', 'BORROWED', 'LOST', 'DAMAGED') NOT NULL DEFAULT 'AVAILABLE',
     acquisition_date DATE NOT NULL,
     FOREIGN KEY (isbn) REFERENCES book(isbn)
 );
@@ -27,14 +29,16 @@ CREATE TABLE book_borrow (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     book_copy_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
+    create_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status ENUM('BORROWED', 'RETURNED', 'OVERDUE', 'RESERVED') NOT NULL DEFAULT 'BORROWED',
-    borrow_date DATETIME NOT NULL,
+    borrow_date DATETIME,
     return_date DATETIME,
     expected_borrow_date DATE,
     FOREIGN KEY (book_copy_id) REFERENCES book_copy(id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
+-- 图书信息视图
 CREATE VIEW book_info AS
 SELECT 
     b.isbn,
