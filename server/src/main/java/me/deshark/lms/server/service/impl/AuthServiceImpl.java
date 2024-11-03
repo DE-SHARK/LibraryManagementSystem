@@ -12,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import me.deshark.lms.server.utils.JwtUtil;
+import org.springframework.security.core.AuthenticationException;
 
 @Service
 public class AuthServiceImpl implements IUserService {
@@ -24,6 +26,9 @@ public class AuthServiceImpl implements IUserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Override
     public User getUserById(Long id) {
@@ -54,10 +59,19 @@ public class AuthServiceImpl implements IUserService {
 
     @Override
     public ResultResponse<String> loginUser(AuthRequest authRequest) {
-        Authentication authenticationRequest =
-                UsernamePasswordAuthenticationToken.unauthenticated(authRequest.getUsername(), authRequest.getPassword());
-        Authentication authenticationResponse =
-                authenticationManager.authenticate(authenticationRequest);
-        return ResultResponse.success(authenticationResponse.getPrincipal().toString());
+        try {
+            // 验证用户名密码
+            Authentication authenticationRequest =
+                    UsernamePasswordAuthenticationToken.unauthenticated(authRequest.getUsername(), authRequest.getPassword());
+            Authentication authenticationResponse =
+                    authenticationManager.authenticate(authenticationRequest);
+                    
+            // 生成JWT token
+            String token = jwtUtil.generateToken(authRequest.getUsername());
+            
+            return ResultResponse.success(token);
+        } catch (AuthenticationException e) {
+            return ResultResponse.error(401, "用户名或密码错误");
+        }
     }
 }
