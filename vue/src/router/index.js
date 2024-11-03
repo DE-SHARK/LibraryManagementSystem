@@ -5,6 +5,7 @@ import Register from '../views/Register.vue'
 import BookManagement from '../views/BookManagement.vue'
 import LibrarianManagement from '../views/LibrarianManagement.vue'
 import BorrowerManagement from '../views/BorrowerManagement.vue'
+import MyBorrows from '../views/MyBorrows.vue'
 
 const routes = [
   {
@@ -49,6 +50,15 @@ const routes = [
       requiresAuth: true,
       roles: ['ADMIN', 'LIBRARIAN']
     }
+  },
+  {
+    path: '/my-borrows',
+    name: 'MyBorrows',
+    component: MyBorrows,
+    meta: { 
+      requiresAuth: true,
+      roles: ['BORROWER']
+    }
   }
 ]
 
@@ -60,16 +70,15 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const role = localStorage.getItem('role')
-  
+  const userRole = localStorage.getItem('role')
+
   if (to.meta.requiresAuth && !token) {
     next('/login')
-  } else if (to.meta.roles && !to.meta.roles.includes(role)) {
-    // 如果页面需要特定角色权限但用户不具备
-    next('/')  // 重定向到首页
+  } else if (to.meta.roles && !to.meta.roles.includes(userRole?.toUpperCase())) {
+    next('/')
   } else {
     next()
   }
 })
 
-export default router 
+export default router

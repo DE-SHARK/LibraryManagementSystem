@@ -43,6 +43,15 @@
         <i class="fas fa-users"></i>
         借阅者管理
       </router-link>
+      
+      <router-link 
+        v-if="userRole.toUpperCase() === 'BORROWER'" 
+        to="/my-borrows" 
+        class="nav-item"
+      >
+        <i class="fas fa-book-reader"></i>
+        我的借阅
+      </router-link>
     </div>
     
     <h1>欢迎使用图书管理系统</h1>
