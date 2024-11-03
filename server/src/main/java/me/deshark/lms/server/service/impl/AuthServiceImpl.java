@@ -171,7 +171,7 @@ public class AuthServiceImpl implements IUserService {
         user.setUsername(authRequest.getUsername());
         user.setPassword(hashedPassword);
         user.setRole("LIBRARIAN");
-        userMapper.insertUser(user);
+        userMapper.insertLibrarian(user);
         
         return ResultResponse.success("添加图书管理员成功");
     }

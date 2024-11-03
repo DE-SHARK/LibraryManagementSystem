@@ -24,6 +24,10 @@ public interface UserMapper {
     @Insert("INSERT INTO user(username, password) VALUES(#{username}, #{password})")
     int insertUser(User user);
 
+    // 插入图书管理员
+    @Insert("INSERT INTO user(username, password, role) VALUES(#{username}, #{password}, 'LIBRARIAN')")
+    int insertLibrarian(User user);
+
     // 获取所有借阅者
     @Select("SELECT * FROM user WHERE role = 'BORROWER'")
     List<User> getAllBorrowers();

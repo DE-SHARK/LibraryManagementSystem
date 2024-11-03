@@ -11,6 +11,7 @@ public class BookBorrow {
     private Date createDate;
     private String status;  // BORROWED, RETURNED, OVERDUE, RESERVED
     private Date borrowDate;
+    private Date dueDate;
     private Date returnDate;
     private Date expectedBorrowDate;
 }

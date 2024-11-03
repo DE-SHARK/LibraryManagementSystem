@@ -15,9 +15,10 @@ public class AuthController {
     @Autowired
     private IUserService authService;
 
-    @RequestMapping("/getUserById")
-    public User getUserById(Long id) {
-        return authService.getUserById(id);
+    @GetMapping("/getUserById")
+    public ResultResponse<User> getUserById(@RequestParam Long id) {
+        User user = authService.getUserById(id);
+        return ResultResponse.success(user);
     }
 
     // 注册

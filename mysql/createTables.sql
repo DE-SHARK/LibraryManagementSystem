@@ -32,6 +32,7 @@ CREATE TABLE book_borrow (
     create_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status ENUM('BORROWED', 'RETURNED', 'OVERDUE', 'RESERVED') NOT NULL DEFAULT 'BORROWED',
     borrow_date DATETIME,
+    due_date DATETIME,
     return_date DATETIME,
     expected_borrow_date DATE,
     FOREIGN KEY (book_copy_id) REFERENCES book_copy(id),

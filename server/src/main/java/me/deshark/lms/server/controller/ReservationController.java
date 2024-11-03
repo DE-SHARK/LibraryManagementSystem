@@ -17,8 +17,6 @@ public class ReservationController {
     private IReservationService reservationService;
     
     @PostMapping("/reserve")
-    
-    // 改为从RequestBody中获取
     public ResultResponse<String> reserveBook(
             @RequestBody ReservationRequest reservationRequest) {
         // 从Spring Security上下文中获取当前登录用户
@@ -40,20 +38,20 @@ public class ReservationController {
     }
 
     @PostMapping("/return")
-    public ResultResponse<String> returnBook(@RequestBody String isbn) {
+    public ResultResponse<String> returnBook(@RequestBody ReservationRequest reservationRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getId();
 
-        return reservationService.returnBook(isbn, userId);
+        return reservationService.returnBook(reservationRequest.getIsbn(), userId);
     }
 
     @PostMapping("/renew")
-    public ResultResponse<String> renewBook(@RequestBody String isbn) {
+    public ResultResponse<String> renewBook(@RequestBody ReservationRequest reservationRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getId();
 
-        return reservationService.renewBook(isbn, userId);
+        return reservationService.renewBook(reservationRequest.getIsbn(), userId);
     }
 } 

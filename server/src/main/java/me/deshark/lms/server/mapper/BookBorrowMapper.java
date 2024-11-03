@@ -39,9 +39,13 @@ public interface BookBorrowMapper {
     @Insert("INSERT INTO book_borrow (book_copy_id, user_id, status, borrow_date, expected_borrow_date) VALUES (#{bookCopyId}, #{userId}, #{status}, #{borrowDate}, #{expectedBorrowDate})")
     void insertBookBorrow(BookBorrow bookBorrow);
 
-    // 获取图书副本ID
-    @Select("SELECT book_copy_id FROM book_borrow WHERE user_id = #{userId} AND book_copy_id IN (SELECT id FROM book_copy WHERE isbn = #{isbn})")
+    // 获取图书副本ID (不获取已经归还的图书副本ID)
+    @Select("SELECT book_copy_id FROM book_borrow WHERE user_id = #{userId} AND book_copy_id IN (SELECT id FROM book_copy WHERE isbn = #{isbn}) AND status != 'RETURNED'")
     Long getBookCopyIdByUserIdAndIsbn(Long userId, String isbn);
+
+    // 获取借阅记录的归还日期
+    @Select("SELECT due_date FROM book_borrow WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}")
+    Date getBookBorrowDueDate(Long userId, Long bookCopyId);
 
     // 更新借阅状态
     @Update("UPDATE book_borrow SET status = #{status} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}")
@@ -54,6 +58,14 @@ public interface BookBorrowMapper {
     // 更新借阅日期
     @Update("UPDATE book_borrow SET borrow_date = #{newBorrowDate} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}") 
     void updateBookBorrowBorrowDate(Long userId, Long bookCopyId, Date newBorrowDate);
+
+    // 更新借阅记录的归还日期
+    @Update("UPDATE book_borrow SET due_date = #{dueDate} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}")
+    void updateBookBorrowDueDate(Long userId, Long bookCopyId, Date dueDate);
+
+    // 更新借阅记录的已归还日期
+    @Update("UPDATE book_borrow SET return_date = #{returnDate} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}")
+    void updateBookBorrowReturnDate(Long userId, Long bookCopyId, Date returnDate);
 
     // 获取图书的已借阅数量
     @Select("SELECT COUNT(*) FROM book_borrow bb " +

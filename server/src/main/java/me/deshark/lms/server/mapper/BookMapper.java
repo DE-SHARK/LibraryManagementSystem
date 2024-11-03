@@ -21,7 +21,7 @@ public interface BookMapper {
     List<BookInfo> findBooksByAuthor(String author);
 
     // 根据CLC号查找图书
-    @Select("SELECT * FROM book_info WHERE clc_number LIKE CONCAT(#{clcNumber}, '%')")
+    @Select("SELECT * FROM book_info WHERE clc_number LIKE CONCAT('%', #{clcNumber}, '%')")
     List<BookInfo> findBooksByClcNumber(String clcNumber);
 
     // 根据ISBN查找图书

@@ -35,7 +35,7 @@ public class ReservationServiceImpl implements IReservationService {
     public ResultResponse<String> reserveBook(String isbn, Long userId, Date expectedBorrowDate) {
 
         // 检查用户是否符合借阅条件
-        if (isUserEligibleForBorrowing(userId)) {
+        if (!isUserEligibleForBorrowing(userId)) {
             return ResultResponse.error(400, "用户不符合借阅条件");
         }
 
@@ -78,7 +78,7 @@ public class ReservationServiceImpl implements IReservationService {
     public ResultResponse<String> borrowBook(String isbn, Long userId) {
 
         // 检查用户是否符合借阅条件
-        if (isUserEligibleForBorrowing(userId)) {
+        if (!isUserEligibleForBorrowing(userId)) {
             return ResultResponse.error(400, "用户不符合借阅条件");
         }
 
@@ -102,8 +102,16 @@ public class ReservationServiceImpl implements IReservationService {
             bookBorrow.setUserId(userId);
             bookBorrow.setStatus("BORROWED");
             bookBorrow.setBorrowDate(new Date());
+            // 计算最晚归还日期（假设借阅期为14天）
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_MONTH, 14);
+            Date dueDate = calendar.getTime();
+            bookBorrow.setDueDate(dueDate);
             // 插入借阅记录
             bookBorrowMapper.insertBookBorrow(bookBorrow);
+
+            return ResultResponse.success("借书成功，最晚归还日期为：" + dueDate);
         } else {
             // 如果用户已预借此书
             // 获取图书副本ID
@@ -112,20 +120,28 @@ public class ReservationServiceImpl implements IReservationService {
             bookCopyMapper.updateBookCopyStatus(bookCopyId, "BORROWED");
             // 更新预借记录为借阅记录
             bookBorrowMapper.updateBookBorrowStatus(userId, bookCopyId, "BORROWED");
+            // 更新借阅记录的借阅时间
+            bookBorrowMapper.updateBookBorrowBorrowDate(userId, bookCopyId, new Date());
+            // 计算最晚归还日期（假设借阅期为14天）
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_MONTH, 14);
+            Date dueDate = calendar.getTime();
+            // 更新借阅记录的归还日期
+            bookBorrowMapper.updateBookBorrowDueDate(userId, bookCopyId, dueDate);
+
+            return ResultResponse.success("借书成功，最晚归还日期为：" + dueDate);
         }
-
-        // 计算最晚归还日期（假设借阅期为14天）
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DAY_OF_MONTH, 14);
-        Date dueDate = calendar.getTime();
-
-        return ResultResponse.success("借书成功，最晚归还日期为：" + dueDate);
     }
 
     // 归还图书
     @Override
     public ResultResponse<String> returnBook(String isbn, Long userId) {
+
+        // 检查用户是否已借阅此书
+        if (bookBorrowMapper.getBorrowedBookCountByIsbn(userId, isbn) == 0) {
+            return ResultResponse.error(400, "用户未借阅此图书");
+        }
 
         // 获取图书副本ID
         Long bookCopyId = bookBorrowMapper.getBookCopyIdByUserIdAndIsbn(userId, isbn);
@@ -136,7 +152,11 @@ public class ReservationServiceImpl implements IReservationService {
         // 更新借阅记录状态为归还
         bookBorrowMapper.updateBookBorrowStatus(userId, bookCopyId, "RETURNED");
 
-        return ResultResponse.success("图书归还成功");
+        Date returnDate = new Date();
+        // 更新借阅记录的已归还日期
+        bookBorrowMapper.updateBookBorrowReturnDate(userId, bookCopyId, returnDate);
+
+        return ResultResponse.success("图书归还成功, 归还日期为：" + returnDate);
     }
 
     // 续借图书
@@ -151,24 +171,30 @@ public class ReservationServiceImpl implements IReservationService {
         }
     
         // 检查用户是否符合续借条件
-        if (isUserEligibleForBorrowing(userId)) {
+        if (!isUserEligibleForBorrowing(userId)) {
             return ResultResponse.error(400, "用户不符合续借条件");
         }
+
+        // 检查用户是否已借阅此书
+        if (bookBorrowMapper.getBorrowedBookCountByIsbn(userId, isbn) == 0) {
+            return ResultResponse.error(400, "用户未借阅此图书");
+        }
     
-        // 更新借阅记录状态为续借
-        bookBorrowMapper.updateBookBorrowStatus(userId, bookCopyId, "BORROWED");
-    
-        // 获取当前借阅记录的借阅日期
-        Date borrowDate = bookBorrowMapper.getBookBorrowBorrowDate(userId, bookCopyId);
+        // // 获取当前借阅记录的借阅日期
+        // Date borrowDate = bookBorrowMapper.getBookBorrowBorrowDate(userId, bookCopyId);
+
+        // 获取当前借阅记录的归还日期
+        Date dueDate = bookBorrowMapper.getBookBorrowDueDate(userId, bookCopyId);
+
         // 计算新的借阅日期
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(borrowDate);
+        calendar.setTime(dueDate);
         calendar.add(Calendar.DAY_OF_MONTH, 14);
-        Date newBorrowDate = calendar.getTime();
-        // 更新借阅记录的借阅日期
-        bookBorrowMapper.updateBookBorrowBorrowDate(userId, bookCopyId, newBorrowDate);
+        Date newDueDate = calendar.getTime();
+        // 更新借阅记录的归还日期
+        bookBorrowMapper.updateBookBorrowDueDate(userId, bookCopyId, newDueDate);
 
-        return ResultResponse.success("续借成功");
+        return ResultResponse.success("续借成功，最晚归还日期为：" + newDueDate);
     }
 
     // 检查用户是否符合借阅条件
