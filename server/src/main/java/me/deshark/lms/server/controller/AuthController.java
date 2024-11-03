@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 public class AuthController {
@@ -29,7 +31,7 @@ public class AuthController {
 
     // 登录
     @PostMapping("/login")
-    public ResultResponse<String> login(@RequestBody @Validated AuthRequest authRequest) {
+    public ResultResponse<Map<String, String>> login(@RequestBody @Validated AuthRequest authRequest) {
         return authService.loginUser(authRequest);
     }
 

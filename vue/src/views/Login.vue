@@ -16,8 +16,10 @@ const handleLogin = async () => {
     })
     
     if (response.data.code === 200) {
-      localStorage.setItem('token', response.data.data)
+      console.log('Login response:', response.data.data)
+      localStorage.setItem('token', response.data.data.token)
       localStorage.setItem('username', username.value)
+      localStorage.setItem('role', response.data.data.role)
       router.push('/')
     } else {
       errorMessage.value = response.data.message || '登录失败'

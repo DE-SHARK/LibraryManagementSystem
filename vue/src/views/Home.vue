@@ -16,6 +16,13 @@
       </div>
     </div>
     
+    <div class="nav-menu" v-if="userRole && ['ADMIN', 'LIBRARIAN'].includes(userRole.toUpperCase())">
+      <router-link to="/book-management" class="nav-item">
+        <i class="fas fa-book"></i>
+        图书管理
+      </router-link>
+    </div>
+    
     <h1>欢迎使用图书管理系统</h1>
     <div class="search-section">
       <div class="search-box">
@@ -214,16 +221,42 @@
 .menu-item:hover {
   background-color: #f5f5f5;
 }
+
+.nav-menu {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #42b883;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.nav-item:hover {
+  background-color: #3aa876;
+}
 </style>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
 import axios from '../utils/axios'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const showDropdown = ref(false)
-const username = ref(localStorage.getItem('username') || '未登录')
+const username = ref(localStorage.getItem('username'))
+const userRole = ref(localStorage.getItem('role'))
+
+// 添加调试信息
+console.log('Current user role:', userRole.value)
 
 // 切换下拉菜单显示状态
 const toggleDropdown = () => {

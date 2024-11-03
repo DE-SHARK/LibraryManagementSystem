@@ -17,6 +17,7 @@ import me.deshark.lms.server.utils.JwtUtil;
 import org.springframework.security.core.AuthenticationException;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class AuthServiceImpl implements IUserService {
@@ -64,7 +65,7 @@ public class AuthServiceImpl implements IUserService {
     }
 
     @Override
-    public ResultResponse<String> loginUser(AuthRequest authRequest) {
+    public ResultResponse<Map<String, String>> loginUser(AuthRequest authRequest) {
         try {
             // 验证用户名密码
             Authentication authenticationRequest =
@@ -72,10 +73,18 @@ public class AuthServiceImpl implements IUserService {
             Authentication authenticationResponse =
                     authenticationManager.authenticate(authenticationRequest);
                     
+            // 获取用户信息
+            User user = userMapper.getUserByUsername(authRequest.getUsername());
+            
             // 生成JWT token
             String token = jwtUtil.generateToken(authRequest.getUsername());
             
-            return ResultResponse.success(token);
+            // 构建返回数据
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("token", token);
+            responseData.put("role", user.getRole());
+            
+            return ResultResponse.success(responseData);
         } catch (AuthenticationException e) {
             return ResultResponse.error(401, "用户名或密码错误");
         }

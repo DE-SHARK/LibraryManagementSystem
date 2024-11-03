@@ -15,7 +15,7 @@ public interface IUserService {
 
     ResultResponse<String> registerUser(AuthRequest authRequest);
 
-    ResultResponse<String> loginUser(AuthRequest authRequest);
+    ResultResponse<Map<String, String>> loginUser(AuthRequest authRequest);
 
     List<User> getAllBorrowers();
 
