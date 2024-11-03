@@ -16,10 +16,32 @@
       </div>
     </div>
     
-    <div class="nav-menu" v-if="userRole && ['ADMIN', 'LIBRARIAN'].includes(userRole.toUpperCase())">
-      <router-link to="/book-management" class="nav-item">
+    <div class="nav-menu" v-if="userRole">
+      <router-link 
+        v-if="['ADMIN', 'LIBRARIAN'].includes(userRole.toUpperCase())" 
+        to="/book-management" 
+        class="nav-item"
+      >
         <i class="fas fa-book"></i>
         图书管理
+      </router-link>
+      
+      <router-link 
+        v-if="userRole.toUpperCase() === 'ADMIN'" 
+        to="/librarian-management" 
+        class="nav-item"
+      >
+        <i class="fas fa-users-cog"></i>
+        管理员管理
+      </router-link>
+      
+      <router-link 
+        v-if="['ADMIN', 'LIBRARIAN'].includes(userRole.toUpperCase())" 
+        to="/borrower-management" 
+        class="nav-item"
+      >
+        <i class="fas fa-users"></i>
+        借阅者管理
       </router-link>
     </div>
     

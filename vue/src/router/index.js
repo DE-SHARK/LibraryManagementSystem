@@ -3,6 +3,8 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import BookManagement from '../views/BookManagement.vue'
+import LibrarianManagement from '../views/LibrarianManagement.vue'
+import BorrowerManagement from '../views/BorrowerManagement.vue'
 
 const routes = [
   {
@@ -25,6 +27,24 @@ const routes = [
     path: '/book-management',
     name: 'BookManagement',
     component: BookManagement,
+    meta: { 
+      requiresAuth: true,
+      roles: ['ADMIN', 'LIBRARIAN']
+    }
+  },
+  {
+    path: '/librarian-management',
+    name: 'LibrarianManagement',
+    component: LibrarianManagement,
+    meta: { 
+      requiresAuth: true,
+      roles: ['ADMIN']
+    }
+  },
+  {
+    path: '/borrower-management',
+    name: 'BorrowerManagement',
+    component: BorrowerManagement,
     meta: { 
       requiresAuth: true,
       roles: ['ADMIN', 'LIBRARIAN']
