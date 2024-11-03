@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface BookBorrowMapper {
@@ -42,4 +44,29 @@ public interface BookBorrowMapper {
     // 更新借阅日期
     @Update("UPDATE book_borrow SET borrow_date = #{newBorrowDate} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}") 
     void updateBookBorrowBorrowDate(Long userId, Long bookCopyId, Date newBorrowDate);
+
+    // 获取图书的活跃借阅数量
+    @Select("SELECT COUNT(*) FROM book_borrow bb " +
+            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
+            "WHERE bc.isbn = #{isbn} AND bb.status IN ('BORROWED', 'RESERVED')")
+    int getActiveBorrowCount(String isbn);
+
+    // 获取图书的已借阅数量
+    @Select("SELECT COUNT(*) FROM book_borrow bb " +
+            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
+            "WHERE bc.isbn = #{isbn} AND bb.status = 'BORROWED'")
+    int getBorrowedCount(String isbn);
+
+    // 获取图书的已预约数量
+    @Select("SELECT COUNT(*) FROM book_borrow bb " +
+            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
+            "WHERE bc.isbn = #{isbn} AND bb.status = 'RESERVED'")
+    int getReservedCount(String isbn);
+
+    // 获取图书的借阅记录
+    @Select("SELECT bb.*, u.username FROM book_borrow bb " +
+            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
+            "JOIN user u ON bb.user_id = u.id " +
+            "WHERE bc.isbn = #{isbn} ORDER BY bb.create_date DESC")
+    List<Map<String, Object>> getBorrowRecords(String isbn);
 }
