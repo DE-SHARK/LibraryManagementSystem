@@ -35,4 +35,8 @@ public interface UserMapper {
     // 删除用户
     @Delete("DELETE FROM user WHERE id = #{id}")
     void deleteUser(Long id);
+
+    // 获取所有图书管理员信息
+    @Select("SELECT * FROM user WHERE role = 'LIBRARIAN'")
+    List<User> getAllLibrarians();
 }

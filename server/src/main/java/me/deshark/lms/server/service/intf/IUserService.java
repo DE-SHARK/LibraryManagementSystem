@@ -26,4 +26,12 @@ public interface IUserService {
     ResultResponse<String> deleteBorrower(Long id);
 
     ResultResponse<List<Map<String, Object>>> getBorrowerHistory(Long id);
+
+    List<User> getAllLibrarians();
+
+    ResultResponse<String> addLibrarian(AuthRequest authRequest);
+
+    ResultResponse<String> updateLibrarian(Long id, User user);
+
+    ResultResponse<String> deleteLibrarian(Long id);
 }

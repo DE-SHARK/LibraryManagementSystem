@@ -154,4 +154,67 @@ public class AuthServiceImpl implements IUserService {
         List<Map<String, Object>> history = bookBorrowMapper.getUserBorrowHistory(id);
         return ResultResponse.success(history);
     }
+
+    @Override
+    public List<User> getAllLibrarians() {
+        return userMapper.getAllLibrarians();
+    }
+
+    @Override
+    public ResultResponse<String> addLibrarian(AuthRequest authRequest) {
+        if (getUserByUsername(authRequest.getUsername()) != null) {
+            return ResultResponse.error(400, "用户名已存在");
+        }
+        
+        String hashedPassword = passwordEncoder.encode(authRequest.getPassword());
+        User user = new User();
+        user.setUsername(authRequest.getUsername());
+        user.setPassword(hashedPassword);
+        user.setRole("LIBRARIAN");
+        userMapper.insertUser(user);
+        
+        return ResultResponse.success("添加图书管理员成功");
+    }
+
+    @Override
+    public ResultResponse<String> updateLibrarian(Long id, User user) {
+        User existingUser = getUserById(id);
+        if (existingUser == null) {
+            return ResultResponse.error(400, "用户不存在");
+        }
+        if (!"LIBRARIAN".equals(existingUser.getRole())) {
+            return ResultResponse.error(400, "只能修改图书管理员信息");
+        }
+        
+        // 如果修改了用户名，检查新用户名是否已存在
+        if (!existingUser.getUsername().equals(user.getUsername()) && 
+            getUserByUsername(user.getUsername()) != null) {
+            return ResultResponse.error(400, "用户名已存在");
+        }
+        
+        user.setId(id);
+        user.setRole("LIBRARIAN");
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            user.setPassword(existingUser.getPassword());
+        }
+        
+        userMapper.updateUser(user);
+        return ResultResponse.success("更新图书管理员信息成功");
+    }
+
+    @Override
+    public ResultResponse<String> deleteLibrarian(Long id) {
+        User user = getUserById(id);
+        if (user == null) {
+            return ResultResponse.error(400, "用户不存在");
+        }
+        if (!"LIBRARIAN".equals(user.getRole())) {
+            return ResultResponse.error(400, "只能删除图书管理员");
+        }
+        
+        userMapper.deleteUser(id);
+        return ResultResponse.success("删除图书管理员成功");
+    }
 }
