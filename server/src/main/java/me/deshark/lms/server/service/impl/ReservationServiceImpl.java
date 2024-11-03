@@ -174,14 +174,8 @@ public class ReservationServiceImpl implements IReservationService {
     // 检查用户是否符合借阅条件
     @Override
     public boolean isUserEligibleForBorrowing(Long userId) {
-        User user = userMapper.getUserById(userId);
-        if (user == null || !"BORROWER".equals(user.getRole())) {
-            return true;
-        }
-        
-        // 检查用户是否有逾期未还的图书
-        int overdueCount = bookBorrowMapper.getOverdueBookCount(userId);
-        return overdueCount != 0;
+        // 检查用户是否有超过限制的借阅
+        return bookBorrowMapper.getUserActiveBorrowCount(userId) < 3;
     }
 
     // 检查图书是否可预借

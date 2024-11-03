@@ -13,6 +13,16 @@ import java.util.Map;
 @Mapper
 public interface BookBorrowMapper {
 
+    // 获取用户的活跃借阅数量（包括已借和预约）
+    @Select("SELECT COUNT(*) FROM book_borrow WHERE user_id = #{userId} AND status IN ('BORROWED', 'RESERVED')")
+    int getUserActiveBorrowCount(Long userId);
+
+    // 获取图书的活跃借阅数量（包括已借和预约）
+    @Select("SELECT COUNT(*) FROM book_borrow bb " +
+            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
+            "WHERE bc.isbn = #{isbn} AND bb.status IN ('BORROWED', 'RESERVED')")
+    int getBookActiveBorrowCount(String isbn);
+
     // 获取用户逾期未还的图书数量
     @Select("SELECT COUNT(*) FROM book_borrow WHERE user_id = #{userId} AND status = 'BORROWED'")
     int getOverdueBookCount(Long userId);
@@ -45,12 +55,6 @@ public interface BookBorrowMapper {
     @Update("UPDATE book_borrow SET borrow_date = #{newBorrowDate} WHERE user_id = #{userId} AND book_copy_id = #{bookCopyId}") 
     void updateBookBorrowBorrowDate(Long userId, Long bookCopyId, Date newBorrowDate);
 
-    // 获取图书的活跃借阅数量
-    @Select("SELECT COUNT(*) FROM book_borrow bb " +
-            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
-            "WHERE bc.isbn = #{isbn} AND bb.status IN ('BORROWED', 'RESERVED')")
-    int getActiveBorrowCount(String isbn);
-
     // 获取图书的已借阅数量
     @Select("SELECT COUNT(*) FROM book_borrow bb " +
             "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
@@ -69,4 +73,12 @@ public interface BookBorrowMapper {
             "JOIN user u ON bb.user_id = u.id " +
             "WHERE bc.isbn = #{isbn} ORDER BY bb.create_date DESC")
     List<Map<String, Object>> getBorrowRecords(String isbn);
+
+    // 获取用户借阅历史
+    @Select("SELECT bb.*, b.title, b.author FROM book_borrow bb " +
+            "JOIN book_copy bc ON bb.book_copy_id = bc.id " +
+            "JOIN book_info b ON bc.isbn = b.isbn " +
+            "WHERE bb.user_id = #{userId} " +
+            "ORDER BY bb.create_date DESC")
+    List<Map<String, Object>> getUserBorrowHistory(Long userId);
 }

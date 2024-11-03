@@ -72,7 +72,7 @@ public class BookServiceImpl implements IBookService {
             return ResultResponse.error(400, "图书不存在");
         }
         
-        if (bookBorrowMapper.getActiveBorrowCount(isbn) > 0) {
+        if (bookBorrowMapper.getBookActiveBorrowCount(isbn) > 0) {
             return ResultResponse.error(400, "该图书还有未归还的借阅记录，无法删除");
         }
         
