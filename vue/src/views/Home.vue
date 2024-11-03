@@ -1,5 +1,21 @@
 <template>
   <div class="home-container">
+    <div class="user-menu">
+      <div class="user-icon" @click="toggleDropdown">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="dropdown-menu" v-if="showDropdown">
+        <div class="user-info">
+          <p>用户名：{{ username }}</p>
+        </div>
+        <div class="divider"></div>
+        <div class="menu-item" @click="handleLogout">
+          <i class="fas fa-sign-out-alt"></i>
+          退出登录
+        </div>
+      </div>
+    </div>
+    
     <h1>欢迎使用图书管理系统</h1>
     <div class="search-section">
       <div class="search-box">
@@ -141,11 +157,101 @@
   color: #666;
   font-size: 16px;
 }
+
+.user-menu {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #42b883;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.user-icon:hover {
+  background-color: #3aa876;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  min-width: 200px;
+  padding: 10px 0;
+}
+
+.user-info {
+  padding: 10px 15px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 5px 0;
+}
+
+.menu-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-item:hover {
+  background-color: #f5f5f5;
+}
 </style>
 
 <script setup>
-import { ref } from 'vue'
-import axios from 'axios'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from '../utils/axios'
+
+const router = useRouter()
+const showDropdown = ref(false)
+const username = ref(localStorage.getItem('username') || '未登录')
+
+// 切换下拉菜单显示状态
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value
+}
+
+// 处理退出登录
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('username')
+  router.push('/login')
+}
+
+// 点击其他区域关闭下拉菜单
+const closeDropdown = (e) => {
+  if (!e.target.closest('.user-menu')) {
+    showDropdown.value = false
+  }
+}
+
+// 添加全局点击事件监听
+onMounted(() => {
+  document.addEventListener('click', closeDropdown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeDropdown)
+})
 
 const searchQuery = ref('')
 const books = ref([])

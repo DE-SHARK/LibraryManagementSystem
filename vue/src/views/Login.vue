@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from '../utils/axios'
 
 const router = useRouter()
 const username = ref('')
@@ -9,26 +10,20 @@ const errorMessage = ref('')
 
 const handleLogin = async () => {
   try {
-    const response = await fetch('http://localhost:8080/user/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: username.value,
-        password: password.value
-      })
+    const response = await axios.post('/user/login', {
+      username: username.value,
+      password: password.value
     })
     
-    const data = await response.json()
-    if (data.code === 200) {
-      localStorage.setItem('token', data.data)
+    if (response.data.code === 200) {
+      localStorage.setItem('token', response.data.data)
+      localStorage.setItem('username', username.value)
       router.push('/')
     } else {
-      errorMessage.value = data.message || '登录失败'
+      errorMessage.value = response.data.message || '登录失败'
     }
   } catch (error) {
-    errorMessage.value = '登录失败，请稍后重试'
+    errorMessage.value = error.response?.data?.message || '登录失败，请稍后重试'
   }
 }
 </script>

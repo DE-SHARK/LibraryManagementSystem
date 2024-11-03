@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from '../utils/axios'
 
 const router = useRouter()
 const username = ref('')
@@ -15,25 +16,18 @@ const handleRegister = async () => {
   }
 
   try {
-    const response = await fetch('http://localhost:8080/user/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: username.value,
-        password: password.value
-      })
+    const response = await axios.post('/user/register', {
+      username: username.value,
+      password: password.value
     })
     
-    if (response.status === 200) {
+    if (response.data.code === 200) {
       router.push('/login')
     } else {
-      const data = await response.text()
-      errorMessage.value = data || '注册失败'
+      errorMessage.value = response.data.message || '注册失败'
     }
   } catch (error) {
-    errorMessage.value = '注册失败，请稍后重试'
+    errorMessage.value = error.response?.data?.message || '注册失败，请稍后重试'
   }
 }
 </script>
