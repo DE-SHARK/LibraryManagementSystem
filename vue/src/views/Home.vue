@@ -325,7 +325,7 @@ const searchBooks = async () => {
   if (!searchQuery.value.trim()) return
   
   try {
-    const response = await axios.get(`/api/book/searchByTitle?title=${searchQuery.value}`)
+    const response = await axios.get(`/book/searchByTitle?title=${searchQuery.value}`)
     console.log(response.data.data)
     books.value = response.data.data
     hasSearched.value = true
