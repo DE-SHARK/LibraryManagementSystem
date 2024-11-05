@@ -14,7 +14,7 @@ public interface IBookService {
     // 根据CLC号查找图书
     List<BookInfo> findBooksByClcNumber(String clcNumber);
     // 根据ISBN查找图书
-    BookInfo getBookInfoByIsbn(String isbn);
+    BookInfo findBookByIsbn(String isbn);
     // 获取所有图书
     List<BookInfo> getAllBooks();
     // 添加图书

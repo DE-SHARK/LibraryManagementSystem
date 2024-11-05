@@ -37,7 +37,7 @@ public class BookServiceImpl implements IBookService {
     }
 
     @Override
-    public BookInfo getBookInfoByIsbn(String isbn) {
+    public BookInfo findBookByIsbn(String isbn) {
         return bookMapper.getBookInfoByIsbn(isbn);
     }
 

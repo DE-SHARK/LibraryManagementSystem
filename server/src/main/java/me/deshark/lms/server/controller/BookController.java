@@ -30,8 +30,8 @@ public class BookController {
         return ResultResponse.success(bookService.findBooksByClcNumber(clcNumber));
     }
 
-    @GetMapping("/info/{isbn}")
-    public ResultResponse<BookInfo> getBookInfo(@PathVariable String isbn) {
-        return ResultResponse.success(bookService.getBookInfoByIsbn(isbn));
+    @GetMapping("/searchByIsbn")
+    public ResultResponse<BookInfo> getBookInfo(@RequestParam String isbn) {
+        return ResultResponse.success(bookService.findBookByIsbn(isbn));
     }
 } 
