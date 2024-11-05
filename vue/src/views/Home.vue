@@ -4,7 +4,12 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const userRole = ref('')
+const searchKeyword = ref('')
+const searchType = ref('title') // 搜索类型:title/author/clcNumber
+const searchResults = ref([])
+const loading = ref(false)
 
+// 检查是否已登录
 onMounted(() => {
   const token = localStorage.getItem('token')
   const role = localStorage.getItem('role')
@@ -15,6 +20,7 @@ onMounted(() => {
   }
 })
 
+// 退出登录
 const logout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('role')
@@ -22,8 +28,38 @@ const logout = () => {
   router.push('/login')
 }
 
+// 跳转个人中心
 const goToUserCenter = () => {
   router.push('/user-center')
+}
+
+// 搜索图书
+const searchBooks = async () => {
+  if (!searchKeyword.value.trim()) {
+    alert('请输入搜索关键词')
+    return
+  }
+
+  loading.value = true
+  try {
+    const token = localStorage.getItem('token')
+    const response = await fetch(`http://localhost:8080/book/searchBy${searchType.value.charAt(0).toUpperCase() + searchType.value.slice(1)}?${searchType.value}=${searchKeyword.value}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    const data = await response.json()
+    if (data.code === 200) {
+      searchResults.value = data.data
+    } else {
+      alert(data.message)
+    }
+  } catch (error) {
+    console.error('搜索失败:', error)
+    alert('搜索失败,请重试')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -48,10 +84,38 @@ const goToUserCenter = () => {
     <main class="main-content">
       <!-- 搜索区域 -->
       <div class="search-section">
-        <div class="search-box">
-          <input type="text" placeholder="搜索图书、作者、主题..." />
-          <button class="search-btn">搜索</button>
+        <div class="search-type">
+          <select v-model="searchType">
+            <option value="title">书名</option>
+            <option value="author">作者</option>
+            <option value="clcNumber">分类号</option>
+          </select>
         </div>
+        <div class="search-box">
+          <input 
+            type="text" 
+            v-model="searchKeyword"
+            :placeholder="searchType === 'title' ? '搜索书名...' : searchType === 'author' ? '搜索作者...' : '搜索分类号...'"
+            @keyup.enter="searchBooks"
+          />
+          <button class="search-btn" @click="searchBooks" :disabled="loading">
+            {{ loading ? '搜索中...' : '搜索' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 搜索结果区域 -->
+      <div v-if="searchResults.length > 0" class="search-results">
+        <div v-for="book in searchResults" :key="book.isbn" class="book-card">
+          <h3>{{ book.title }}</h3>
+          <p>作者: {{ book.author }}</p>
+          <p>ISBN: {{ book.isbn }}</p>
+          <p>位置: {{ book.location }}</p>
+          <p>可借数量: {{ book.availableQuantity }}/{{ book.totalQuantity }}</p>
+        </div>
+      </div>
+      <div v-else-if="searchKeyword && !loading" class="no-results">
+        未找到相关图书
       </div>
 
       <!-- 功能区域 -->
@@ -246,5 +310,58 @@ const goToUserCenter = () => {
   padding-top: 2rem;
   margin-top: 2rem;
   border-top: 1px solid #333;
+}
+
+.search-type {
+  margin-bottom: 1rem;
+}
+
+.search-type select {
+  padding: 0.8rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 200px;
+}
+
+.search-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.book-card {
+  background-color: #2c2c2c;
+  padding: 1.5rem;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+}
+
+.book-card h3 {
+  color: #646cff;
+  margin-bottom: 1rem;
+}
+
+.book-card p {
+  margin: 0.5rem 0;
+  color: #ddd;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
 }
 </style>
